@@ -5,11 +5,11 @@ import { Send, Bot, User, Loader2, AlertCircle, Sparkles, Key } from 'lucide-rea
 import Layout from '@/components/Layout';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { Portfolio, MacroViews, ChatMessage, AnalysisResponse } from '@/types/portfolio';
-import { calculatePortfolioSummary } from '@/lib/portfolio-utils';
-import { analyzePortfolio, generateFollowUpQuestions } from '@/lib/ai-utils';
+import { analyzePortfolio } from '@/lib/ai-utils';
 import { loadPortfolio } from '@/lib/portfolio-storage';
 import { getOrCreateMacroViews, saveMacroViews } from '@/lib/macro-views-storage';
 import { loadApiKey, saveApiKey, hasApiKey, validateApiKey } from '@/lib/api-key-storage';
+import Link from 'next/link';
 
 export default function AnalysisPage() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
@@ -170,9 +170,9 @@ export default function AnalysisPage() {
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Portfolio Found</h3>
           <p className="text-gray-500 mb-6">Please add some assets to your portfolio first.</p>
-          <a href="/" className="btn-primary">
+          <Link href="/" className="btn-primary">
             Go to Portfolio
-          </a>
+          </Link>
         </div>
       </Layout>
     );
@@ -215,8 +215,8 @@ export default function AnalysisPage() {
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <h4 className="text-sm font-medium text-blue-900 mb-2">Security Note</h4>
                   <p className="text-sm text-blue-700">
-                    Your API key is stored securely in your browser's localStorage and is only used to make requests to OpenAI. 
-                    It's never transmitted to our servers or stored in our database.
+                    Your API key is stored securely in your browser&apos;s localStorage and is only used to make requests to OpenAI. 
+                    It&apos;s never transmitted to our servers or stored in our database.
                   </p>
                 </div>
 
@@ -258,7 +258,7 @@ export default function AnalysisPage() {
                     onChange={(e) => setMacroViews(prev => ({ ...prev, economicGrowth: e.target.value }))}
                     className="form-input resize-none"
                     rows={3}
-                    placeholder="What's your view on economic growth? (e.g., recession, slow growth, strong recovery)"
+                    placeholder="What&apos;s your view on economic growth? (e.g., recession, slow growth, strong recovery)"
                   />
                 </div>
 

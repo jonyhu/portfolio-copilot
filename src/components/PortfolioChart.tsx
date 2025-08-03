@@ -2,7 +2,7 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { PortfolioSummary } from '@/types/portfolio';
-import { getAssetTypeColor, getAssetTypeLabel } from '@/lib/portfolio-utils';
+import { getAssetTypeLabel } from '@/lib/portfolio-utils';
 
 interface PortfolioChartProps {
   summary: PortfolioSummary;
@@ -18,7 +18,18 @@ export default function PortfolioChart({ summary }: PortfolioChartProps) {
     amount: summary.allocationByType[type],
   }));
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  interface TooltipProps {
+    active?: boolean;
+    payload?: Array<{
+      payload: {
+        name: string;
+        amount: number;
+        value: number;
+      };
+    }>;
+  }
+
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -36,9 +47,16 @@ export default function PortfolioChart({ summary }: PortfolioChartProps) {
     return null;
   };
 
-  const CustomLegend = ({ payload }: any) => (
+  interface LegendProps {
+    payload?: Array<{
+      value: string;
+      color: string;
+    }>;
+  }
+
+  const CustomLegend = ({ payload }: LegendProps) => (
     <div className="flex flex-wrap justify-center gap-4 mt-4">
-      {payload?.map((entry: any, index: number) => (
+      {payload?.map((entry, index: number) => (
         <div key={entry.value} className="flex items-center space-x-2">
           <div
             className="w-3 h-3 rounded-full"
@@ -74,7 +92,7 @@ export default function PortfolioChart({ summary }: PortfolioChartProps) {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+              label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
               outerRadius={80}
               fill="#8884d8"
               dataKey="value"

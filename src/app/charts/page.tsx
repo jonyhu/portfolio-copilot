@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import Layout from '@/components/Layout';
 import PortfolioChart from '@/components/PortfolioChart';
-import { Portfolio } from '@/types/portfolio';
+import { Portfolio, PortfolioSummary } from '@/types/portfolio';
 import { calculatePortfolioSummary, formatCurrency } from '@/lib/portfolio-utils';
 
 export default function ChartsPage() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
-  const [summary, setSummary] = useState<any>(null);
+  const [summary, setSummary] = useState<PortfolioSummary | null>(null);
 
   // Load portfolio from localStorage
   useEffect(() => {
@@ -63,12 +63,22 @@ export default function ChartsPage() {
     };
   });
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  interface TooltipProps {
+    active?: boolean;
+    payload?: Array<{
+      name: string;
+      value: number;
+      color: string;
+    }>;
+    label?: string;
+  }
+
+  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
           <p className="font-medium text-gray-900">{label}</p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry, index: number) => (
             <p key={index} className="text-sm text-gray-600" style={{ color: entry.color }}>
               {entry.name}: {entry.name === 'Gain/Loss' ? formatCurrency(entry.value) : `${entry.value}%`}
             </p>

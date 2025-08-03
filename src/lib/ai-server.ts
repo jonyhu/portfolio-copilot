@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { Portfolio, MacroViews, AnalysisRequest, AnalysisResponse } from '@/types/portfolio';
+import { Portfolio, MacroViews, AnalysisRequest, AnalysisResponse, PortfolioSummary } from '@/types/portfolio';
 import { calculatePortfolioSummary } from './portfolio-utils';
 
 export async function analyzePortfolio(request: AnalysisRequest, apiKey: string): Promise<AnalysisResponse> {
@@ -22,7 +22,7 @@ export async function analyzePortfolio(request: AnalysisRequest, apiKey: string)
 
 async function handleInitialAnalysis(
   portfolio: Portfolio,
-  summary: any,
+  summary: PortfolioSummary,
   macroViews: MacroViews,
   openai: OpenAI
 ): Promise<AnalysisResponse> {
@@ -74,7 +74,7 @@ Format your response with clear section headers using **bold** text. Be direct, 
 
 async function handleFollowUpQuestion(
   portfolio: Portfolio,
-  summary: any,
+  summary: PortfolioSummary,
   macroViews: MacroViews,
   question: string,
   openai: OpenAI
@@ -112,7 +112,7 @@ async function handleFollowUpQuestion(
   }
 }
 
-function buildInitialAnalysisPrompt(portfolio: Portfolio, summary: any, macroViews: MacroViews): string {
+function buildInitialAnalysisPrompt(portfolio: Portfolio, summary: PortfolioSummary, macroViews: MacroViews): string {
   return `Please analyze this investment portfolio in the context of the stated macro views:
 
 PORTFOLIO SUMMARY:
@@ -141,7 +141,7 @@ MACRO VIEWS:
 Please provide a comprehensive analysis following the structured format requested.`;
 }
 
-function buildFollowUpPrompt(portfolio: Portfolio, summary: any, macroViews: MacroViews, question: string): string {
+function buildFollowUpPrompt(portfolio: Portfolio, summary: PortfolioSummary, macroViews: MacroViews, question: string): string {
   return `Based on this portfolio and macro context, please answer this specific question: "${question}"
 
 PORTFOLIO CONTEXT:

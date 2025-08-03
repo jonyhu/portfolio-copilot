@@ -5,7 +5,7 @@ import { Download, Upload, Trash2, AlertTriangle, Key, Eye, EyeOff } from 'lucid
 import Layout from '@/components/Layout';
 import { Portfolio } from '@/types/portfolio';
 import { loadPortfolio, clearPortfolio } from '@/lib/portfolio-storage';
-import { loadApiKey, saveApiKey, clearApiKey, hasApiKey, validateApiKey } from '@/lib/api-key-storage';
+import { loadApiKey, saveApiKey, clearApiKey, validateApiKey } from '@/lib/api-key-storage';
 import { clearMacroViews } from '@/lib/macro-views-storage';
 
 export default function SettingsPage() {
@@ -52,7 +52,7 @@ export default function SettingsPage() {
         localStorage.setItem('portfolio', JSON.stringify(importedPortfolio));
         setPortfolio(importedPortfolio);
         alert('Portfolio imported successfully!');
-      } catch (error) {
+      } catch {
         alert('Error importing portfolio. Please check the file format.');
       }
     };

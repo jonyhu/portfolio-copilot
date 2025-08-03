@@ -49,7 +49,7 @@ export default function AssetForm({ asset, onSave, onCancel, isOpen }: AssetForm
     setErrors([]);
   }, [asset, isOpen]);
 
-  const handleInputChange = (field: keyof Asset, value: any) => {
+  const handleInputChange = (field: keyof Asset, value: string | number) => {
     setFormData(prev => ({
       ...prev,
       [field]: value

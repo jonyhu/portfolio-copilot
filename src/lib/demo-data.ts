@@ -1,4 +1,4 @@
-import { Portfolio } from '@/types/portfolio';
+import { Portfolio, MacroViews } from '@/types/portfolio';
 import { generatePortfolioId } from './portfolio-utils';
 import { savePortfolio } from './portfolio-storage';
 import { saveMacroViews } from './macro-views-storage';
@@ -75,7 +75,7 @@ export const demoMacroViews = {
   industrySpecific: 'I\'m bullish on technology (AI/cloud computing), healthcare (aging population), and defensive sectors. Cautious on consumer discretionary and real estate due to high rates.',
 };
 
-export function loadDemoData(): { portfolio: Portfolio; macroViews: any } {
+export function loadDemoData(): { portfolio: Portfolio; macroViews: MacroViews } {
   // Save the demo portfolio and macro views to localStorage
   savePortfolio(demoPortfolio);
   saveMacroViews(demoMacroViews);

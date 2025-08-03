@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+
 import { Briefcase, BarChart3, MessageSquare, Settings, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
