@@ -238,16 +238,16 @@ export default function AnalysisPage() {
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Sparkles className="h-6 w-6 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gradient">AI Analysis</h1>
+            <h1 className="text-3xl font-bold text-gradient">Portfolio Analysis</h1>
           </div>
-          <p className="text-gray-600">Get AI-powered insights on your portfolio</p>
+          <p className="text-gray-600">Think deeper about your investment thesis with AI</p>
         </div>
 
         {showMacroForm ? (
           <div className="card">
             <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">Share Your Macro Views</h3>
-              <p className="text-sm text-gray-600">Help the AI understand your investment thesis</p>
+              <h3 className="text-lg font-semibold text-gray-900">Share Your Investment Views</h3>
+              <p className="text-sm text-gray-600">Help your thinking partner understand your investment thesis</p>
             </div>
             <div className="card-body">
               <form onSubmit={(e) => { e.preventDefault(); handleMacroViewsSubmit(); }} className="space-y-6">

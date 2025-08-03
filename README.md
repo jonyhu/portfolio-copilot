@@ -1,15 +1,15 @@
-# Portfolio Advisor Web App
+# Portfolio Copilot
 
-A comprehensive portfolio analysis and advisory tool designed for experienced individual investors to evaluate their portfolio through the lens of macro-economic views and investment committee-style analysis.
+Your investment thinking partner. Think deeper about your investment thesis with AI-powered portfolio analysis that challenges your assumptions and validates your macro views.
 
 ## Features
 
 ### Core Functionality
 - **Portfolio Management**: Add, edit, and delete assets (stocks, ETFs, bonds)
-- **AI-Powered Analysis**: Interactive chat interface using OpenAI GPT for portfolio insights
-- **Macro View Integration**: Evaluate portfolio impact based on economic growth, interest rates, government policy, and geopolitics
-- **Investment Committee Simulation**: AI challenges your investment thesis and asks follow-up questions
-- **Visual Analytics**: Pie charts and allocation breakdowns
+- **Investment Thinking Partner**: AI-powered analysis that challenges your assumptions
+- **Thesis Validation**: Evaluate if your portfolio aligns with your macro views
+- **Second Opinion**: Get investment committee-style analysis on your portfolio
+- **Visual Insights**: Charts and analytics for deeper portfolio thinking
 
 ### Technical Stack
 - **Frontend**: Next.js 14 with TypeScript and TailwindCSS

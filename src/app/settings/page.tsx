@@ -115,7 +115,7 @@ export default function SettingsPage() {
           <div className="card">
             <div className="card-header">
               <h3 className="text-lg font-semibold text-gray-900">API Key Management</h3>
-              <p className="text-sm text-gray-600">Manage your OpenAI API key for AI analysis features</p>
+              <p className="text-sm text-gray-600">Manage your OpenAI API key for portfolio analysis features</p>
             </div>
             <div className="card-body">
               <div className="space-y-4">

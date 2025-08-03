@@ -30,8 +30,8 @@ export default function Layout({ children }: LayoutProps) {
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gradient">Portfolio Advisor</h1>
-                <p className="text-xs text-gray-500 -mt-1">AI-Powered Investment Analysis</p>
+                <h1 className="text-xl font-bold text-gradient">Portfolio Copilot</h1>
+                <p className="text-xs text-gray-500 -mt-1">Your Investment Thinking Partner</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
