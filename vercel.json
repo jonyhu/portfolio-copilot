@@ -1,17 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "env": {
     "OPENAI_API_KEY": "@openai_api_key",
     "OPENAI_MODEL": "gpt-4-turbo-preview"
   },
   "functions": {
     "src/app/api/analyze/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/follow-up-questions/route.ts": {
       "maxDuration": 30
     }
   }
