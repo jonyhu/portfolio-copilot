@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Send, Bot, User, Loader2, AlertCircle, Sparkles, Key } from 'lucide-react';
 import Layout from '@/components/Layout';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { Portfolio, MacroViews, ChatMessage, AnalysisResponse } from '@/types/portfolio';
 import { calculatePortfolioSummary } from '@/lib/portfolio-utils';
 import { analyzePortfolio, generateFollowUpQuestions } from '@/lib/ai-utils';
@@ -340,7 +341,13 @@ export default function AnalysisPage() {
                         ) : (
                           <Bot className="w-4 h-4 mt-1 flex-shrink-0" />
                         )}
-                        <div className="whitespace-pre-wrap">{message.content}</div>
+                        <div className="w-full">
+                          {message.role === 'assistant' ? (
+                            <MarkdownRenderer content={message.content} />
+                          ) : (
+                            <div className="whitespace-pre-wrap">{message.content}</div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
