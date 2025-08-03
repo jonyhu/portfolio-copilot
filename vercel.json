@@ -1,9 +1,5 @@
 {
   "version": 2,
-  "env": {
-    "OPENAI_API_KEY": "@openai_api_key",
-    "OPENAI_MODEL": "gpt-4-turbo-preview"
-  },
   "functions": {
     "src/app/api/analyze/route.ts": {
       "maxDuration": 30
