@@ -57,7 +57,15 @@ Format your response with clear section headers using **bold** text. Be direct, 
     });
     const response = completion.choices[0]?.message?.content || '';
     console.log('Server: Received OpenAI response:', response.substring(0, 200) + '...');
-    return parseAnalysisResponse(response);
+    
+    // Simply return the full response - no parsing needed
+    return {
+      insights: [],
+      contradictions: [],
+      followUpQuestions: [],
+      recommendations: [],
+      riskAssessment: response
+    };
   } catch (error) {
     console.error('Server: Error analyzing portfolio:', error);
     throw new Error(`Failed to analyze portfolio: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -149,122 +157,6 @@ MACRO CONTEXT:
 Please provide a conversational, direct answer to the question while referencing the portfolio and macro context when relevant.`;
 }
 
-function parseAnalysisResponse(response: string): AnalysisResponse {
-  console.log('Server: Parsing response:', response.substring(0, 500) + '...');
-  
-  // Try different parsing strategies
-  let sections: string[] = [];
-  
-  // Strategy 1: Split by bold headers with colons
-  sections = response.split(/\*\*([^*]+)\*\*:/g);
-  console.log('Server: Strategy 1 - Split sections:', sections.length, 'parts');
-  
-  // If we don't get enough sections, try strategy 2
-  if (sections.length < 6) {
-    // Strategy 2: Split by numbered sections
-    sections = response.split(/\d+\.\s*\*\*([^*]+)\*\*:/g);
-    console.log('Server: Strategy 2 - Split sections:', sections.length, 'parts');
-  }
-  
-  // If still not enough, try strategy 3
-  if (sections.length < 6) {
-    // Strategy 3: Split by any bold text
-    sections = response.split(/\*\*([^*]+)\*\*/g);
-    console.log('Server: Strategy 3 - Split sections:', sections.length, 'parts');
-  }
-  
-  const result = {
-    insights: extractSection(sections, 'INSIGHTS') as string[],
-    contradictions: extractSection(sections, 'CONTRADICTIONS') as string[],
-    followUpQuestions: extractSection(sections, 'FOLLOW-UP QUESTIONS') as string[],
-    recommendations: extractSection(sections, 'RECOMMENDATIONS') as string[],
-    riskAssessment: extractSection(sections, 'RISK ASSESSMENT') as string,
-  };
-  
-  console.log('Server: Parsed result:', {
-    insightsCount: result.insights.length,
-    contradictionsCount: result.contradictions.length,
-    followUpQuestionsCount: result.followUpQuestions.length,
-    recommendationsCount: result.recommendations.length,
-    riskAssessmentLength: result.riskAssessment.length
-  });
-  
-  // If parsing failed completely, return the full response as risk assessment
-  const totalItems = result.insights.length + result.contradictions.length + 
-                    result.followUpQuestions.length + result.recommendations.length;
-  
-  if (totalItems === 0 && result.riskAssessment.length === 0) {
-    console.log('Server: Parsing failed, returning full response as risk assessment');
-    return {
-      insights: [],
-      contradictions: [],
-      followUpQuestions: [],
-      recommendations: [],
-      riskAssessment: response
-    };
-  }
-  
-  return result;
-}
-
-function extractSection(sections: string[], sectionName: string): string[] | string {
-  console.log('Server: Looking for section:', sectionName);
-  
-  // Try different variations of the section name
-  const variations = [
-    sectionName.toUpperCase(),
-    sectionName,
-    sectionName.replace('-', ' '),
-    sectionName.replace(' ', '-'),
-    sectionName.replace('UP QUESTIONS', 'UP QUESTIONS'),
-    sectionName.replace('UP QUESTIONS', 'UP_QUESTIONS')
-  ];
-  
-  let sectionIndex = -1;
-  let foundVariation = '';
-  
-  for (const variation of variations) {
-    sectionIndex = sections.findIndex(section => 
-      section.trim().toUpperCase() === variation.toUpperCase()
-    );
-    if (sectionIndex !== -1) {
-      foundVariation = variation;
-      break;
-    }
-  }
-  
-  console.log('Server: Section index for', sectionName, ':', sectionIndex, 'found variation:', foundVariation);
-  
-  if (sectionIndex === -1 || sectionIndex + 1 >= sections.length) {
-    console.log('Server: Section not found or no content:', sectionName);
-    return sectionName === 'RISK ASSESSMENT' ? '' : [];
-  }
-  
-  const content = sections[sectionIndex + 1].trim();
-  console.log('Server: Content for', sectionName, ':', content.substring(0, 200) + '...');
-  
-  if (sectionName === 'RISK ASSESSMENT') {
-    return content;
-  }
-  
-  // Parse bullet points for other sections - be more flexible
-  const items = content.split('\n')
-    .map(line => line.trim())
-    .filter(line => 
-      line.startsWith('-') || 
-      line.startsWith('•') || 
-      line.startsWith('*') ||
-      line.match(/^[A-Z][a-z]/) // Lines starting with capital letters
-    )
-    .map(line => {
-      // Remove bullet points and numbering
-      return line.replace(/^[-•*\d\.]\s*/, '').trim();
-    })
-    .filter(item => item.length > 0 && !item.match(/^[A-Z\s]+$/)); // Filter out all-caps headers
-  
-  console.log('Server: Extracted items for', sectionName, ':', items.length, 'items');
-  return items;
-}
 
 export async function generateFollowUpQuestions(
   portfolio: Portfolio,

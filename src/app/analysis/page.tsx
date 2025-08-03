@@ -149,34 +149,8 @@ export default function AnalysisPage() {
   };
 
   const formatInitialAnalysis = (analysis: AnalysisResponse): string => {
-    let response = '';
-    
-    // Start with a clear overview
-    response += '## Portfolio Analysis Overview\n\n';
-    
-    if (analysis.insights && analysis.insights.length > 0) {
-      response += '**Key Insights:**\n' + analysis.insights.map(i => `• ${i}`).join('\n') + '\n\n';
-    }
-    
-    if (analysis.contradictions && analysis.contradictions.length > 0) {
-      response += '**Potential Contradictions:**\n' + analysis.contradictions.map(c => `• ${c}`).join('\n') + '\n\n';
-    }
-    
-    if (analysis.recommendations && analysis.recommendations.length > 0) {
-      response += '**Recommendations:**\n' + analysis.recommendations.map(r => `• ${r}`).join('\n') + '\n\n';
-    }
-    
-    if (analysis.riskAssessment) {
-      response += '**Risk Assessment:**\n' + analysis.riskAssessment + '\n\n';
-    }
-    
-    // End with follow-up questions
-    if (analysis.followUpQuestions && analysis.followUpQuestions.length > 0) {
-      response += '---\n\n**Follow-up Questions to Consider:**\n' + analysis.followUpQuestions.map(q => `• ${q}`).join('\n') + '\n\n';
-    }
-    
-    response += '**What would you like to explore further about your portfolio or investment strategy?**';
-    return response;
+    // Simply return the full AI response with a follow-up question
+    return analysis.riskAssessment + '\n\n**What would you like to explore further about your portfolio or investment strategy?**';
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
