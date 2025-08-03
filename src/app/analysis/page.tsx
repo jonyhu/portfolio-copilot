@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Send, Bot, User, Loader2, AlertCircle, Sparkles, Key } from 'lucide-react';
 import Layout from '@/components/Layout';
-import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { Portfolio, MacroViews, ChatMessage, AnalysisResponse } from '@/types/portfolio';
 import { calculatePortfolioSummary } from '@/lib/portfolio-utils';
 import { analyzePortfolio, generateFollowUpQuestions } from '@/lib/ai-utils';
@@ -150,8 +149,34 @@ export default function AnalysisPage() {
   };
 
   const formatInitialAnalysis = (analysis: AnalysisResponse): string => {
-    // Simply return the full AI response with a follow-up question
-    return analysis.riskAssessment + '\n\n**What would you like to explore further about your portfolio or investment strategy?**';
+    let response = '';
+    
+    // Start with a clear overview
+    response += '## Portfolio Analysis Overview\n\n';
+    
+    if (analysis.insights && analysis.insights.length > 0) {
+      response += '**Key Insights:**\n' + analysis.insights.map(i => `• ${i}`).join('\n') + '\n\n';
+    }
+    
+    if (analysis.contradictions && analysis.contradictions.length > 0) {
+      response += '**Potential Contradictions:**\n' + analysis.contradictions.map(c => `• ${c}`).join('\n') + '\n\n';
+    }
+    
+    if (analysis.recommendations && analysis.recommendations.length > 0) {
+      response += '**Recommendations:**\n' + analysis.recommendations.map(r => `• ${r}`).join('\n') + '\n\n';
+    }
+    
+    if (analysis.riskAssessment) {
+      response += '**Risk Assessment:**\n' + analysis.riskAssessment + '\n\n';
+    }
+    
+    // End with follow-up questions
+    if (analysis.followUpQuestions && analysis.followUpQuestions.length > 0) {
+      response += '---\n\n**Follow-up Questions to Consider:**\n' + analysis.followUpQuestions.map(q => `• ${q}`).join('\n') + '\n\n';
+    }
+    
+    response += '**What would you like to explore further about your portfolio or investment strategy?**';
+    return response;
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -341,13 +366,7 @@ export default function AnalysisPage() {
                         ) : (
                           <Bot className="w-4 h-4 mt-1 flex-shrink-0" />
                         )}
-                        <div className="w-full">
-                          {message.role === 'assistant' ? (
-                            <MarkdownRenderer content={message.content} />
-                          ) : (
-                            <div className="whitespace-pre-wrap">{message.content}</div>
-                          )}
-                        </div>
+                        <div className="whitespace-pre-wrap">{message.content}</div>
                       </div>
                     </div>
                   </div>
