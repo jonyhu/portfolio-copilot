@@ -162,15 +162,15 @@ export default function ChartsPage() {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-gray-600">Total Assets:</span>
-                <span className="font-medium">{portfolio.assets.length}</span>
+                <span className="font-medium text-gray-900">{portfolio.assets.length}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Total Value:</span>
-                <span className="font-medium">{formatCurrency(summary.totalValue)}</span>
+                <span className="font-medium text-gray-900">{formatCurrency(summary.totalValue)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Total Cost:</span>
-                <span className="font-medium">{formatCurrency(summary.totalCost)}</span>
+                <span className="font-medium text-gray-900">{formatCurrency(summary.totalCost)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Total Gain/Loss:</span>
