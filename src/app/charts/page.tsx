@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import Layout from '@/components/Layout';
 import PortfolioChart from '@/components/PortfolioChart';
 import { Portfolio, PortfolioSummary } from '@/types/portfolio';
-import { calculatePortfolioSummary, formatCurrency } from '@/lib/portfolio-utils';
+import { calculatePortfolioSummary, formatCurrency, getAssetTypeLabel } from '@/lib/portfolio-utils';
 
 export default function ChartsPage() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
@@ -44,7 +44,7 @@ export default function ChartsPage() {
 
   // Prepare data for allocation by type
   const allocationData = Object.entries(summary.allocationByType).map(([type, value]) => ({
-    type: type.charAt(0).toUpperCase() + type.slice(1),
+    type: getAssetTypeLabel(type),
     value: value as number,
     percentage: summary.allocationByTypePercent[type],
   }));
