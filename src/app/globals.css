@@ -13,13 +13,6 @@
   --error: 239, 68, 68;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 248, 250, 252;
-    --background-start-rgb: 15, 23, 42;
-    --background-end-rgb: 30, 41, 59;
-  }
-}
 
 body {
   color: rgb(var(--foreground-rgb));
@@ -58,11 +51,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.glass-dark {
-  background: rgba(15, 23, 42, 0.25);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 /* Modern gradients */
 .gradient-primary {
