@@ -1,19 +1,11 @@
 import { AnalysisRequest, AnalysisResponse, Portfolio, MacroViews } from '@/types/portfolio';
-import { loadApiKey } from './api-key-storage';
 
 export async function analyzePortfolio(request: AnalysisRequest): Promise<AnalysisResponse> {
   try {
-    const apiKey = loadApiKey();
-    if (!apiKey) {
-      throw new Error('API key not found. Please set up your OpenAI API key first.');
-    }
-
-    console.log('Sending analysis request with API key:', apiKey.substring(0, 10) + '...');
-    
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...request, apiKey }),
+      body: JSON.stringify(request),
     });
     
     if (!response.ok) {
@@ -37,17 +29,10 @@ export async function generateFollowUpQuestions(
   previousAnalysis: AnalysisResponse
 ): Promise<string[]> {
   try {
-    const apiKey = loadApiKey();
-    if (!apiKey) {
-      throw new Error('API key not found. Please set up your OpenAI API key first.');
-    }
-
-    console.log('Sending follow-up questions request with API key:', apiKey.substring(0, 10) + '...');
-    
     const response = await fetch('/api/follow-up-questions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ portfolio, macroViews, previousAnalysis, apiKey }),
+      body: JSON.stringify({ portfolio, macroViews, previousAnalysis }),
     });
     
     if (!response.ok) {

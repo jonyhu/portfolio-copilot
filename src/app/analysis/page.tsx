@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Send, Bot, User, Loader2, AlertCircle, Sparkles, Key } from 'lucide-react';
+import { Send, Bot, User, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import Layout from '@/components/Layout';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { Portfolio, MacroViews, ChatMessage, AnalysisResponse } from '@/types/portfolio';
 import { analyzePortfolio } from '@/lib/ai-utils';
 import { loadPortfolio } from '@/lib/portfolio-storage';
 import { getOrCreateMacroViews, saveMacroViews } from '@/lib/macro-views-storage';
-import { loadApiKey, saveApiKey, hasApiKey, validateApiKey } from '@/lib/api-key-storage';
 import Link from 'next/link';
 
 export default function AnalysisPage() {
@@ -18,9 +17,6 @@ export default function AnalysisPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [macroViews, setMacroViews] = useState<MacroViews>(getOrCreateMacroViews());
   const [showMacroForm, setShowMacroForm] = useState(true);
-  const [showApiKeyForm, setShowApiKeyForm] = useState(!hasApiKey());
-  const [apiKey, setApiKey] = useState(loadApiKey() || '');
-  const [apiKeyError, setApiKeyError] = useState('');
 
   // Load portfolio from localStorage
   useEffect(() => {
@@ -34,19 +30,6 @@ export default function AnalysisPage() {
   useEffect(() => {
     saveMacroViews(macroViews);
   }, [macroViews]);
-
-  const handleApiKeySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setApiKeyError('');
-
-    if (!validateApiKey(apiKey)) {
-      setApiKeyError('Please enter a valid OpenAI API key (starts with sk-)');
-      return;
-    }
-
-    saveApiKey(apiKey);
-    setShowApiKeyForm(false);
-  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !portfolio) return;
@@ -82,10 +65,8 @@ export default function AnalysisPage() {
       let errorMessage = 'Sorry, I encountered an error while analyzing your portfolio. Please try again.';
       
       if (error instanceof Error) {
-        if (error.message.includes('API key not found')) {
-          errorMessage = 'Please set up your OpenAI API key in the settings first.';
-        } else if (error.message.includes('Failed to analyze portfolio')) {
-          errorMessage = 'Failed to analyze portfolio. Please check your API key and try again.';
+        if (error.message.includes('Failed to analyze portfolio')) {
+          errorMessage = 'Failed to analyze portfolio. Please try again.';
         } else {
           errorMessage = `Error: ${error.message}`;
         }
@@ -128,10 +109,8 @@ export default function AnalysisPage() {
       let errorMessage = 'Sorry, I encountered an error while analyzing your portfolio. Please try again.';
       
       if (error instanceof Error) {
-        if (error.message.includes('API key not found')) {
-          errorMessage = 'Please set up your OpenAI API key in the settings first.';
-        } else if (error.message.includes('Failed to analyze portfolio')) {
-          errorMessage = 'Failed to analyze portfolio. Please check your API key and try again.';
+        if (error.message.includes('Failed to analyze portfolio')) {
+          errorMessage = 'Failed to analyze portfolio. Please try again.';
         } else {
           errorMessage = `Error: ${error.message}`;
         }
@@ -173,60 +152,6 @@ export default function AnalysisPage() {
           <Link href="/" className="btn-primary">
             Go to Portfolio
           </Link>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (showApiKeyForm) {
-    return (
-      <Layout>
-        <div className="space-y-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Key className="h-6 w-6 text-blue-600" />
-              <h1 className="text-3xl font-bold text-gradient">API Key Setup</h1>
-            </div>
-            <p className="text-gray-600">Enter your OpenAI API key to enable AI analysis</p>
-          </div>
-
-          <div className="card max-w-md mx-auto">
-            <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">OpenAI API Key</h3>
-              <p className="text-sm text-gray-600">Your API key is stored locally and never sent to our servers</p>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleApiKeySubmit} className="space-y-4">
-                <div>
-                  <label className="form-label">API Key</label>
-                  <input
-                    type="password"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    className="form-input"
-                    placeholder="sk-..."
-                    required
-                  />
-                  {apiKeyError && (
-                    <p className="text-sm text-red-600 mt-1">{apiKeyError}</p>
-                  )}
-                </div>
-
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="text-sm font-medium text-blue-900 mb-2">Security Note</h4>
-                  <p className="text-sm text-blue-700">
-                    Your API key is stored securely in your browser&apos;s localStorage and is only used to make requests to OpenAI. 
-                    It&apos;s never transmitted to our servers or stored in our database.
-                  </p>
-                </div>
-
-                <button type="submit" className="btn-primary w-full">
-                  <Key className="w-4 h-4 mr-2" />
-                  Save API Key
-                </button>
-              </form>
-            </div>
-          </div>
         </div>
       </Layout>
     );

@@ -1,40 +1,78 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { analyzePortfolio } from '@/lib/ai-server';
 import { AnalysisRequest } from '@/types/portfolio';
+import { AI_MAX_QUESTION_CHARS } from '@/lib/ai-config';
+import { enforceRateLimit, getClientIp, isBodyTooLarge, validatePortfolioInputs } from '@/lib/ai-guards';
 
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json(
+        { error: 'Server is missing OpenAI API key configuration.' },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
-    const { portfolio, macroViews, specificQuestions, apiKey } = body;
+    const { portfolio, macroViews, specificQuestions } = body;
+    const questionList = Array.isArray(specificQuestions) ? specificQuestions : undefined;
 
     console.log('API: Received analyze request');
     console.log('API: Portfolio assets:', portfolio?.assets?.length || 0);
-    console.log('API: Has API key:', !!apiKey);
 
-    if (!apiKey) {
-      console.error('API: Missing API key');
+    if (isBodyTooLarge(body)) {
       return NextResponse.json(
-        { error: 'API key is required' },
+        { error: 'Request payload is too large.' },
+        { status: 413 }
+      );
+    }
+
+    const validationError = validatePortfolioInputs(portfolio, macroViews);
+    if (validationError) {
+      console.error('API: Invalid portfolio inputs:', validationError);
+      return NextResponse.json(
+        { error: validationError },
         { status: 400 }
       );
     }
 
-    if (!portfolio || !macroViews) {
-      console.error('API: Missing portfolio or macro views');
+    if (questionList && questionList.length > 1) {
       return NextResponse.json(
-        { error: 'Portfolio and macro views are required' },
+        { error: 'Only one follow-up question is allowed at a time.' },
         { status: 400 }
+      );
+    }
+
+    const question = questionList?.[0];
+    if (question && question.length > AI_MAX_QUESTION_CHARS) {
+      return NextResponse.json(
+        { error: `Question exceeds ${AI_MAX_QUESTION_CHARS} characters.` },
+        { status: 400 }
+      );
+    }
+
+    const ip = getClientIp(request);
+    const rateLimit = enforceRateLimit(ip, 'ai');
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: rateLimit.message },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': rateLimit.retryAfterSeconds.toString(),
+          },
+        }
       );
     }
 
     const analysisRequest: AnalysisRequest = {
       portfolio,
       macroViews,
-      specificQuestions,
+      specificQuestions: questionList,
     };
 
     console.log('API: Calling analyzePortfolio function');
-    const result = await analyzePortfolio(analysisRequest, apiKey);
+    const result = await analyzePortfolio(analysisRequest);
     console.log('API: Analysis completed successfully');
     
     return NextResponse.json(result);

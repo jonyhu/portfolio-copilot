@@ -1,28 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Upload, Trash2, AlertTriangle, Key, Eye, EyeOff } from 'lucide-react';
+import { Download, Upload, Trash2, AlertTriangle } from 'lucide-react';
 import Layout from '@/components/Layout';
 import { Portfolio } from '@/types/portfolio';
 import { loadPortfolio, clearPortfolio } from '@/lib/portfolio-storage';
-import { loadApiKey, saveApiKey, clearApiKey, validateApiKey } from '@/lib/api-key-storage';
 import { clearMacroViews } from '@/lib/macro-views-storage';
 
 export default function SettingsPage() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [apiKeyError, setApiKeyError] = useState('');
-
   useEffect(() => {
     const savedPortfolio = loadPortfolio();
     if (savedPortfolio) {
       setPortfolio(savedPortfolio);
-    }
-    
-    const savedApiKey = loadApiKey();
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
     }
   }, []);
 
@@ -70,34 +60,11 @@ export default function SettingsPage() {
     }
   };
 
-  const handleApiKeySave = () => {
-    setApiKeyError('');
-
-    if (!validateApiKey(apiKey)) {
-      setApiKeyError('Please enter a valid OpenAI API key (starts with sk-)');
-      return;
-    }
-
-    saveApiKey(apiKey);
-    setApiKeyError('');
-    alert('API key saved successfully!');
-  };
-
-  const handleApiKeyClear = () => {
-    if (confirm('Are you sure you want to clear your API key? You will need to re-enter it to use AI features.')) {
-      clearApiKey();
-      setApiKey('');
-      alert('API key cleared successfully!');
-    }
-  };
-
   const clearAllData = () => {
-    if (confirm('Are you sure you want to clear ALL data? This will remove your portfolio, macro views, and API key. This action cannot be undone.')) {
+    if (confirm('Are you sure you want to clear ALL data? This will remove your portfolio and macro views. This action cannot be undone.')) {
       clearPortfolio();
       clearMacroViews();
-      clearApiKey();
       setPortfolio(null);
-      setApiKey('');
       alert('All data cleared successfully!');
     }
   };
@@ -111,52 +78,6 @@ export default function SettingsPage() {
         </div>
 
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* API Key Management */}
-          <div className="card">
-            <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">API Key Management</h3>
-              <p className="text-sm text-gray-600">Manage your OpenAI API key for portfolio analysis features</p>
-            </div>
-            <div className="card-body">
-              <div className="space-y-4">
-                <div>
-                  <label className="form-label">OpenAI API Key</label>
-                  <div className="flex space-x-2">
-                    <div className="flex-1 relative">
-                      <input
-                        type={showApiKey ? 'text' : 'password'}
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        className="form-input pr-10"
-                        placeholder="sk-..."
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowApiKey(!showApiKey)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                    <button onClick={handleApiKeySave} className="btn-primary">
-                      <Key className="w-4 h-4 mr-2" />
-                      Save
-                    </button>
-                    <button onClick={handleApiKeyClear} className="btn-secondary">
-                      Clear
-                    </button>
-                  </div>
-                  {apiKeyError && (
-                    <p className="text-sm text-red-600 mt-1">{apiKeyError}</p>
-                  )}
-                  <p className="text-sm text-gray-500 mt-2">
-                    Your API key is stored locally and never sent to our servers.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Portfolio Management */}
           <div className="card">
             <div className="card-header">
@@ -263,7 +184,7 @@ export default function SettingsPage() {
                   <div>
                     <h4 className="text-sm font-medium text-gray-900">Data Privacy</h4>
                     <p className="text-sm text-gray-500 mt-1">
-                      Your portfolio data is stored locally in your browser. No data is sent to our servers except when using the AI analysis feature, which requires an OpenAI API key.
+                      Your portfolio data is stored locally in your browser. When using AI analysis, your portfolio data and macro views are sent to our servers for processing.
                     </p>
                   </div>
                 </div>
@@ -273,7 +194,7 @@ export default function SettingsPage() {
                   <div>
                     <h4 className="text-sm font-medium text-gray-900">AI Analysis</h4>
                     <p className="text-sm text-gray-500 mt-1">
-                      When using the AI analysis feature, your portfolio data and macro views are sent to OpenAI for analysis. Your API key is stored locally and never transmitted to our servers.
+                      AI analysis uses a server-side OpenAI key and is rate-limited to control usage and costs. We do not store your portfolio data after processing.
                     </p>
                   </div>
                 </div>
@@ -291,7 +212,7 @@ export default function SettingsPage() {
                 <div>
                   <h4 className="text-sm font-medium text-red-900">Clear All Data</h4>
                   <p className="text-sm text-red-700">
-                    Remove all portfolio data, macro views, and API key (cannot be undone)
+                    Remove all portfolio data and macro views (cannot be undone)
                   </p>
                 </div>
                 <button

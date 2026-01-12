@@ -1,15 +1,27 @@
 import OpenAI from 'openai';
 import { Portfolio, MacroViews, AnalysisRequest, AnalysisResponse, PortfolioSummary } from '@/types/portfolio';
 import { calculatePortfolioSummary } from './portfolio-utils';
+import {
+  AI_MODEL,
+  AI_MAX_TOKENS_INITIAL,
+  AI_MAX_TOKENS_FOLLOWUP,
+  AI_MAX_TOKENS_QUESTIONS,
+} from './ai-config';
 
-export async function analyzePortfolio(request: AnalysisRequest, apiKey: string): Promise<AnalysisResponse> {
+function getOpenAIClient(): OpenAI {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY is not configured.');
+  }
+  return new OpenAI({ apiKey });
+}
+
+export async function analyzePortfolio(request: AnalysisRequest): Promise<AnalysisResponse> {
   const { portfolio, macroViews, specificQuestions } = request;
   const summary = calculatePortfolioSummary(portfolio);
 
   console.log('Server: Analyzing portfolio with', portfolio.assets.length, 'assets');
-  console.log('Server: API key provided:', apiKey ? 'Yes' : 'No');
-
-  const openai = new OpenAI({ apiKey });
+  const openai = getOpenAIClient();
 
   const isFollowUp = specificQuestions && specificQuestions.length > 0;
 
@@ -30,7 +42,7 @@ async function handleInitialAnalysis(
   try {
     console.log('Server: Sending initial analysis request to OpenAI');
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: AI_MODEL,
       messages: [
         {
           role: 'system',
@@ -53,7 +65,7 @@ Format your response with clear section headers using **bold** text. Be direct, 
         { role: 'user', content: prompt }
       ],
       temperature: 0.7,
-      max_tokens: 2000,
+      max_tokens: AI_MAX_TOKENS_INITIAL,
     });
     const response = completion.choices[0]?.message?.content || '';
     console.log('Server: Received OpenAI response:', response.substring(0, 200) + '...');
@@ -83,7 +95,7 @@ async function handleFollowUpQuestion(
   try {
     console.log('Server: Sending follow-up question to OpenAI:', question.substring(0, 100) + '...');
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: AI_MODEL,
       messages: [
         {
           role: 'system',
@@ -99,7 +111,7 @@ async function handleFollowUpQuestion(
         { role: 'user', content: prompt }
       ],
       temperature: 0.8,
-      max_tokens: 1500,
+      max_tokens: AI_MAX_TOKENS_FOLLOWUP,
     });
     const response = completion.choices[0]?.message?.content || '';
     console.log('Server: Received follow-up response:', response.substring(0, 200) + '...');
@@ -161,16 +173,15 @@ Please provide a conversational, direct answer to the question while referencing
 export async function generateFollowUpQuestions(
   portfolio: Portfolio,
   macroViews: MacroViews,
-  previousAnalysis: AnalysisResponse,
-  apiKey: string
+  previousAnalysis: AnalysisResponse
 ): Promise<string[]> {
-  const openai = new OpenAI({ apiKey });
+  const openai = getOpenAIClient();
   const summary = calculatePortfolioSummary(portfolio);
   
   try {
     console.log('Server: Generating follow-up questions');
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: AI_MODEL,
       messages: [
         {
           role: 'system',
@@ -188,7 +199,7 @@ Generate 3-5 specific follow-up questions.`
         }
       ],
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: AI_MAX_TOKENS_QUESTIONS,
     });
     
     const response = completion.choices[0]?.message?.content || '';

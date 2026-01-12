@@ -35,7 +35,7 @@ The core idea was to create an AI-powered system that could:
 - **Server-side utilities** (`ai-server.ts`) that handle actual OpenAI API calls
 - **Next.js API routes** that provide a secure bridge between the two
 
-This architecture allows users to securely input their own OpenAI API keys while keeping the actual AI processing server-side.
+This architecture keeps the OpenAI API key server-side while still preserving a clean client/server boundary.
 
 ### Challenge 2: Data Persistence Without a Database
 
@@ -45,7 +45,7 @@ This architecture allows users to securely input their own OpenAI API keys while
 - **Portfolio data** (`portfolio-storage.ts`)
 - **Macro economic views** (`macro-views-storage.ts`)
 - **Chat history** (`chat-storage.ts`)
-- **API key management** (`api-key-storage.ts`)
+- **AI request guards** (`ai-guards.ts`)
 
 Each utility includes proper SSR safety checks and error handling.
 
@@ -94,7 +94,7 @@ Initial versions had serious UI issues (white text on white backgrounds, poor co
 
 ### OpenAI GPT API
 - **Why**: Most capable language model for nuanced financial analysis
-- **Trade-offs**: Cost and API key management, but user-provided keys solve this
+- **Trade-offs**: Cost and API key management, mitigated with server-side rate limits and input caps
 
 ### TypeScript
 - **Why**: Essential for a financial application where data integrity matters
@@ -144,7 +144,7 @@ For developers interested in the implementation details:
 - **Key Libraries**: react-markdown, rehype-highlight, lucide-react
 
 The application demonstrates patterns for:
-- Secure client-side API key management
+- Server-side API key management with usage limits
 - localStorage-based persistence with SSR safety
 - AI conversation flow design
 - Financial data visualization

@@ -13,12 +13,12 @@ Your investment thinking partner. Think deeper about your investment thesis with
 - **Conversational Analysis**: Dynamic AI chat that builds on previous conversations
 - **Visual Insights**: Interactive charts and portfolio analytics
 - **Data Persistence**: Client-side storage with no account required
-- **Privacy-First**: Your data stays on your device and your own OpenAI account
+- **Privacy-First**: Your data stays on your device except during AI analysis
 
 ### Technical Stack
 - **Frontend**: Next.js 15 with App Router, TypeScript, and TailwindCSS
 - **Charts**: Recharts for interactive data visualization
-- **AI Integration**: OpenAI GPT API with client-side key management
+- **AI Integration**: OpenAI GPT API with server-side key and rate limiting
 - **Markdown**: Enhanced response formatting with syntax highlighting
 - **Icons**: Lucide React
 - **Deployment**: Vercel with serverless API routes
@@ -28,14 +28,13 @@ Your investment thinking partner. Think deeper about your investment thesis with
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
-- OpenAI API key
+- OpenAI API key (for local dev or self-hosting)
 
 ### Quick Start
 
 **Option 1: Use the hosted version (recommended)**
 1. Visit [portfoliocopilot.dev](https://portfoliocopilot.dev)
-2. Enter your OpenAI API key in the Settings tab
-3. Start analyzing your portfolio immediately
+2. Start analyzing your portfolio immediately
 
 **Option 2: Run locally**
 1. Clone the repository:
@@ -49,26 +48,37 @@ cd portfolio-copilot
 npm install
 ```
 
-3. Run the development server:
+3. Create a `.env.local` file (see `.env.example`):
+```bash
+OPENAI_API_KEY=sk-your-key-here
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-5. Enter your OpenAI API key in the Settings tab when prompted
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### API Key Setup
-This application uses client-side API key management for privacy and security:
-- No server-side storage of your API key
-- Your key is stored only in your browser's localStorage
+This application uses a server-side OpenAI API key:
+- Set `OPENAI_API_KEY` in `.env.local` (local dev) or your hosting provider
+- Keys are never exposed to the browser
 - You can get an OpenAI API key at [platform.openai.com](https://platform.openai.com/api-keys)
+
+### Cost Controls
+Usage limits are configurable via environment variables (see `.env.example`):
+- `AI_RATE_LIMIT_PER_MINUTE` and `AI_RATE_LIMIT_PER_DAY` for request caps
+- `AI_MAX_ASSETS`, `AI_MAX_BODY_CHARS`, and `AI_MAX_MACRO_CHARS` for input limits
+- `OPENAI_MAX_TOKENS_*` to control response length
+- `OPENAI_MODEL` to choose a cost/quality tradeoff
 
 ## Usage
 
 ### Getting Started
 1. **Load Demo Data** (optional): Click "Load Demo Data" to explore with sample portfolio
-2. **Add Your API Key**: Go to Settings → Enter your OpenAI API key
-3. **Build Your Portfolio**: Add your actual holdings or start with demo data
+2. **Build Your Portfolio**: Add your actual holdings or start with demo data
+3. **AI Analysis**: Navigate to Analysis and share your macro views
 
 ### Portfolio Management
 1. **Add Assets**: Click "Add Asset" in the Portfolio tab
@@ -132,11 +142,11 @@ src/
 ## Deployment
 
 ### Vercel (Recommended)
-The app is optimized for Vercel deployment with zero configuration:
+The app is optimized for Vercel deployment with minimal configuration:
 
 1. **Fork this repository** on GitHub
 2. **Connect to Vercel**: Import your fork at [vercel.com](https://vercel.com)
-3. **Deploy**: No environment variables needed - deploys automatically
+3. **Deploy**: Set `OPENAI_API_KEY` as an environment variable
 4. **Custom Domain** (optional): Add your domain in Vercel dashboard
 
 ### Other Platforms
@@ -151,16 +161,16 @@ The app is optimized for Vercel deployment with zero configuration:
 
 ## Architecture Decisions
 
-### Why Client-Side API Keys?
-- **Privacy**: Your OpenAI API key never touches our servers
-- **Cost Control**: You pay OpenAI directly for usage
-- **Simplicity**: No authentication or user management needed
-- **Open Source Friendly**: Anyone can fork and deploy without setup
+### Why Server-Side API Keys?
+- **Low Friction**: Users can try the product without setup
+- **Cost Controls**: Centralized rate limiting and input caps
+- **Security**: Keys never reach the browser
+- **Operational Simplicity**: One configuration for deployment
 
 ### Why localStorage?
 - **No Database Required**: Reduces complexity and hosting costs
 - **Instant Startup**: No account creation or login friction
-- **Privacy**: Data never leaves your device
+- **Privacy**: Data stored locally; only sent during AI analysis
 - **Offline Capable**: Portfolio data available without internet
 
 ## Future Enhancements
@@ -186,7 +196,7 @@ We welcome contributions! Here's how to get started:
 1. **Fork and Clone**: Fork the repo and clone your fork
 2. **Install Dependencies**: `npm install`
 3. **Run Development Server**: `npm run dev`
-4. **Add API Key**: Enter your OpenAI key in Settings for testing
+4. **Set API Key**: Add `OPENAI_API_KEY` to `.env.local` for testing
 
 ### Contribution Guidelines
 - **Issues First**: Open an issue to discuss major changes
