@@ -43,7 +43,7 @@ export function getClientIp(request: NextRequest): string {
   if (forwardedFor) {
     return forwardedFor.split(',')[0]?.trim() || 'unknown';
   }
-  return request.headers.get('x-real-ip') || request.ip || 'unknown';
+  return request.headers.get('x-real-ip') || 'unknown';
 }
 
 export function enforceRateLimit(ip: string, scope: string): RateLimitResult {
